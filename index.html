@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>言語学習・翻訳アプリ</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#FF6B6B">
-    <link rel="apple-touch-icon" href="icon-192x192.png">
     <style>
         :root {
             --primary-color: #FF6B6B;
@@ -243,6 +240,22 @@
             flex-wrap: wrap;
             margin: 15px 0;
         }
+
+        .banner-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .affiliate-banner {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .affiliate-banner:hover {
+            transform: translateY(-5px);
+        }
     </style>
 </head>
 <body>
@@ -301,6 +314,12 @@
                 <button onclick="deleteSelectedFavorites()" class="delete-selected">選択したお気に入りを削除</button>
             </div>
             <div id="historyContent"></div>
+        </div>
+
+        <div class="banner-container">
+            <a href="https://t.co/XSLPMxlTen" target="_blank">
+                <img src=""ramenbet.png"" alt="広告" class="affiliate-banner">
+            </a>
         </div>
     </div>
 
