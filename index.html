@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>言語学習・翻訳アプリ</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF6B6B">
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFE66D;
+            --background-color: #f7f9fc;
+            --card-color: #ffffff;
+            --text-color: #2c3e50;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .app-title {
+            color: var(--primary-color);
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: bounce 1s ease-in-out;
+        }
+
+        .card {
+            background: var(--card-color);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        select, textarea, input[type="text"] {
+            width: 100%;
+            border-radius: 15px;
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+            margin-bottom: 15px;
+        }
+
+        select:focus, textarea:focus, input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255,107,107,0.2);
+            outline: none;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        button {
+            border-radius: 15px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .quiz-card {
+            background: linear-gradient(135deg, #6c5ce7, #a363d9);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .quiz-option {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 1.2em;
+            backdrop-filter: blur(5px);
+        }
+
+        .quiz-option:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+
+        .history-item {
+            background: var(--card-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .history-item:hover {
+            transform: translateX(10px);
+        }
+
+        .favorite {
+            background: linear-gradient(to right, #fff3e0, #fff);
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 5px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 25px;
+            text-align: center;
+            background: var(--card-color);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .tab.active {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .favorite-btn {
+            background: linear-gradient(45deg, #FFB347, #FFCC33);
+        }
+
+        .copy-btn {
+            background: linear-gradient(45deg, #4ECDC4, #45B7AF);
+        }
+
+        .speak-btn {
+            background: linear-gradient(45deg, #A364D9, #8E44AD);
+        }
+
+        .delete-selected {
+            background: linear-gradient(45deg, #FF6B6B, #EE5253);
+            margin-top: 20px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    
+</body>
+    <div class="container">
+        <div class="app-header">
+            <h1 class="app-title">言語学習・翻訳アプリ</h1>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab active" onclick="switchTab('translate')">翻訳</div>
+            <div class="tab" onclick="switchTab('quiz')">クイズ</div>
+            <div class="tab" onclick="switchTab('history')">履歴</div>
+        </div>
+
+        <div id="translateSection" class="card translation-area">
+            <div>
+                <select id="targetLang">
+                    <option value="ja">日本語 (Japanese)</option>
+                    <option value="en">英語 (English)</option>
+                    <option value="ko">韓国語 (Korean)</option>
+                    <option value="vi">ベトナム語 (Vietnamese)</option>
+                    <option value="lo">ラオス語 (Lao)</option>
+                    <option value="zh">中国語 (Chinese)</option>
+                    <option value="th">タイ語 (Thai)</option>
+                    <option value="hi">ヒンディー語 (Hindi)</option>
+                </select>
+            </div>
+            <div>
+                <textarea id="inputText" placeholder="翻訳したいテキストを入力してください"></textarea>
+            </div>
+            <div class="action-buttons">
+                <button onclick="translateText()">翻訳</button>
+                <button onclick="speakText()" class="speak-btn">音声読み上げ</button>
+            </div>
+            <div>
+                <textarea id="outputText" readonly placeholder="翻訳結果がここに表示されます"></textarea>
+            </div>
+            <div class="action-buttons">
+                <button onclick="toggleCurrentFavorite()" class="favorite-btn" id="currentFavoriteBtn">☆ お気に入り</button>
+                <button onclick="copyText(document.getElementById('outputText').value)" class="copy-btn">コピー</button>
+            </div>
+        </div>
+
+        <div id="quizSection" class="card" style="display: none;">
+            <button onclick="generateQuiz()">新しいクイズを生成</button>
+            <div id="quizContent"></div>
+        </div>
+
+        <div id="historySection" class="card" style="display: none;">
+            <input type="text" id="searchBox" class="search-box" placeholder="履歴を検索..." oninput="searchHistory()">
+            <div class="controls">
+                <button onclick="showAllHistory()">すべて表示</button>
+                <button onclick="showFavorites()">お気に入りのみ</button>
+                <button onclick="deleteSelectedFavorites()" class="delete-selected">選択したお気に入りを削除</button>
+            </div>
+            <div id="historyContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let translationHistory = [];
+        let currentTranslation = null;
+
+        // 翻訳機能
+        async function translateText() {
+            const inputText = document.getElementById('inputText').value;
+            const targetLang = document.getElementById('targetLang').value;
+            const outputText = document.getElementById('outputText');
+
+            if (!inputText) {
+                alert('テキストを入力してください');
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURI(inputText)}`);
+                const data = await res.json();
+                outputText.value = data[0][0][0];
+                
+                currentTranslation = {
+                    original: inputText,
+                    translated: outputText.value,
+                    lang: targetLang,
+                    timestamp: new Date().toLocaleString(),
+                    isFavorite: false
+                };
+                
+                updateFavoriteButton(false);
+            } catch (error) {
+                alert('翻訳中にエラーが発生しました');
+                console.error('Translation error:', error);
+            }
+        }
+
+        // 音声読み上げ機能
+        function speakText() {
+            const outputText = document.getElementById('outputText').value;
+            const targetLang = document.getElementById('targetLang').value;
+
+            if (!outputText) {
+                alert('翻訳テキストがありません');
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(outputText);
+            utterance.lang = targetLang;
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // お気に入り機能
+        function toggleCurrentFavorite() {
+            if (!currentTranslation) return;
+            
+            currentTranslation.isFavorite = !currentTranslation.isFavorite;
+            updateFavoriteButton(currentTranslation.isFavorite);
+            
+            if (currentTranslation.isFavorite) {
+                addToHistory(currentTranslation);
+            }
+        }
+
+        function updateFavoriteButton(isFavorite) {
+            const btn = document.getElementById('currentFavoriteBtn');
+            btn.textContent = isFavorite ? '★ お気に入り済み' : '☆ お気に入り';
+            btn.style.background = isFavorite ? 
+                'linear-gradient(45deg, #FFD700, #FFA500)' : 
+                'linear-gradient(45deg, #FFB347, #FFCC33)';
+        }
+
+        // 履歴管理
+        function addToHistory(translation) {
+            const historyItem = {
+                ...translation,
+                id: Date.now()
+            };
+            translationHistory.unshift(historyItem);
+            saveHistory();
+            updateHistoryDisplay();
+        }
+
+        function saveHistory() {
+            localStorage.setItem('translationHistory', JSON.stringify(translationHistory));
+        }
+
+        function loadHistory() {
+            const saved = localStorage.getItem('translationHistory');
+            if (saved) {
+                translationHistory = JSON.parse(saved);
+                updateHistoryDisplay();
+            }
+        }
+
+        // クイズ機能
+        function generateQuiz() {
+            const favorites = translationHistory.filter(item => item.isFavorite);
+            if (favorites.length < 4) {
+                alert('クイズを生成するには少なくとも4つのお気に入りが必要です');
+                return;
+            }
+
+            const targetItem = favorites[Math.floor(Math.random() * favorites.length)];
+            const targetWord = targetItem.translated;
+            const targetChar = Math.floor(Math.random() * targetWord.length);
+            
+            const hiddenWord = targetWord.split('').map((char, i) => 
+                i === targetChar ? '○' : char
+            ).join('');
+
+            const correctAnswer = targetWord[targetChar];
+            const options = [correctAnswer];
+            
+            while (options.length < 4) {
+                const randomChar = String.fromCharCode(
+                    correctAnswer.charCodeAt(0) + Math.floor(Math.random() * 10) - 5
+                );
+                if (!options.includes(randomChar)) {
+                    options.push(randomChar);
+                }
+            }
+
+            const quizContent = document.getElementById('quizContent');
+            quizContent.innerHTML = `
+                <div class="quiz-card">
+                    <h3>クイズ</h3>
+                    <p>次の翻訳文の○に入る文字はどれでしょう？</p>
+                    <p>原文: ${targetItem.original}</p>
+                    <p>問題: ${hiddenWord}</p>
+                    <div class="quiz-options">
+                        ${options.sort(() => Math.random() - 0.5).map(option => `
+                            <div class="quiz-option" onclick="checkAnswer('${option}', '${correctAnswer}')">
+                                ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkAnswer(selected, correct) {
+            if (selected === correct) {
+                alert('正解です！');
+            } else {
+                alert(`不正解です。正解は「${correct}」でした。`);
+            }
+            generateQuiz();
+        }
+
+        // UI管理
+        function switchTab(tabName) {
+            const sections = {
+                'translate': document.getElementById('translateSection'),
+                'quiz': document.getElementById('quizSection'),
+                'history': document.getElementById('historySection')
+            };
+
+            Object.keys(sections).forEach(key => {
+                sections[key].style.display = key === tabName ? 'block' : 'none';
+            });
+
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase().includes(tabName)) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+
+        function updateHistoryDisplay() {
+            const historyContent = document.getElementById('historyContent');
+            historyContent.innerHTML = translationHistory.map(item => `
+                <div class="history-item ${item.isFavorite ? 'favorite' : ''}">
+                    <div class="checkbox-container">
+                        ${item.isFavorite ? `<input type="checkbox" class="favorite-checkbox" value="${item.id}">` : ''}
+                    </div>
+                    <p><strong>原文:</strong> ${item.original}</p>
+                    <p><strong>訳文:</strong> ${item.translated}</p>
+                    <p><small>${item.timestamp}</small></p>
+                    <div class="action-buttons">
+                        <button onclick="copyText('${item.translated}')" class="copy-btn">コピー</button>
+                        <button onclick="speakHistoryItem('${item.translated}', '${item.lang}')" class="speak-btn">読み上げ</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => alert('コピーしました'))
+                .catch(err => console.error('コピーに失敗しました:', err));
+        }
+
+        function deleteSelectedFavorites() {
+            const checkboxes = document.querySelectorAll('.favorite-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert('削除する項目を選択してください');
+                return;
+            }
+
+            if (confirm(`選択した${checkboxes.length}件のお気に入りを削除しますか？`)) {
+                const idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
+                translationHistory = translationHistory.filter(item => !idsToDelete.includes(item.id));
+                saveHistory();
+                updateHistoryDisplay();
+            }
+        }
+
+        function searchHistory() {
+            const searchText = document.getElementById('searchBox').value.toLowerCase();
+            const filteredHistory = translationHistory.filter(item =>
+                item.original.toLowerCase().includes(searchText) ||
+                item.translated.toLowerCase().includes(searchText)
+            );
+            
+            const historyContent = document.getElementById('historyContent');
+            historyContent.innerHTML = filteredHistory.map(item => `
+                <div class="history-item ${item.isFavorite ? 'favorite' : ''}">
+                    <div class="checkbox-container">
+                        ${item.isFavorite ? `<input type="checkbox" class="favorite-checkbox" value="${item.id}">` : ''}
+                    </div>
+                    <p><strong>原文:</strong> ${item.original}</p>
+                    <p><strong>訳文:</strong> ${item.translated}</p>
+                    <p><small>${item.timestamp}</small></p>
+                    <div class="action-buttons">
+                        <button onclick="copyText('${item.translated}')" class="copy-btn">コピー</button>
+                        <button onclick="speakHistoryItem('${item.translated}', '${item.lang}')" class="speak-btn">読み上げ</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function speakHistoryItem(text, lang) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function showAllHistory() {
+            updateHistoryDisplay();
+        }
+
+        function showFavorites() {
+            const historyContent = document.getElementById('historyContent');
+            const favorites = translationHistory.filter(item => item.isFavorite);
+            historyContent.innerHTML = favorites.map(item => `
+                <div class="history-item favorite">
+                    <div class="checkbox-container">
+                        <input type="checkbox" class="favorite-checkbox" value="${item.id}">
+                    </div>
+                    <p><strong>原文:</strong> ${item.original}</p>
+                    <p><strong>訳文:</strong> ${item.translated}</p>
+                    <p><small>${item.timestamp}</small></p>
+                    <div class="action-buttons">
+                        <button onclick="copyText('${item.translated}')" class="copy-btn">コピー</button>
+                        <button onclick="speakHistoryItem('${item.translated}', '${item.lang}')" class="speak-btn">読み上げ</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 初期化
+        window.onload = function() {
+            loadHistory();
+        };
+    </script>
+</body>
+</html>
